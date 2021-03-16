@@ -1,26 +1,21 @@
 import React from "react";
+import {allGraphs, graphContent} from './Graphs';
 
 class SIPDiagram extends React.Component {
   constructor(props) {
     super(props);
 
-    const defaultDiagram = `
-    graph LR;
-        A--> B & C & D;
-        B--> A & E;
-        C--> A & E;
-        D--> A & E;
-        E--> B & C & D;
-    `;
-
     this.state = {
         hasError: false,
         error: null,
         errorInfo: null,
-        diagramText: defaultDiagram,
+
+        diagramText: '',
+        graphKey: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleGraphChange = this.handleGraphChange.bind(this);
   }
 
   componentDidCatch(error, info) {
@@ -33,40 +28,70 @@ class SIPDiagram extends React.Component {
   }
 
   handleChange = (e) => {
-    this.setState({ diagramText: e.target.value});
+    this.setState({
+        diagramText: e.target.value,
+        hasError: false,
+        error: null,
+        errorInfo: null,
+    });
   }
 
-    render() {
-    var self = this;
+    handleGraphChange = (e) => {
+        var key = e.target.value;
+        var graph = graphContent(key);
 
-    var childrenWithProps = React.Children.map(this.props.children, function(child) {
-        return React.cloneElement(child, { mmd: self.state.diagramText });
-    });
-
-    var errMsg = null;
-    if (self.state.hasError && self.state.error && self.state.error.message) {
-        errMsg = <pre>{self.state.error.message}</pre>;
+        this.setState({
+            graphKey: key,
+            diagramText: graph ? graph.content : '',
+            hasError: false,
+            error: null,
+            errorInfo: null,
+        });
     }
 
-    return (
-        <div className="container-fluid">
-            <div className="row">
-              <div className="col-md-6">
-                <h4>Input</h4>
-                <textarea className="chart-text" onChange={e => self.handleChange(e)}>{self.state.diagramText}</textarea>
-              </div>
+    render() {
+        var self = this;
 
-              <div className="col-md-6">
-                <h4>Diagram</h4>
-                {self.state.hasError
-                    ? <><p>Error!</p>{errMsg}</>
-                    : childrenWithProps
-                }
+        var childrenWithProps = React.Children.map(this.props.children, function(child) {
+            return React.cloneElement(child, { mmd: self.state.diagramText });
+        });
+
+        var errMsg = null;
+        if (self.state.hasError && self.state.error && self.state.error.message) {
+            errMsg = <pre>{self.state.error.message}</pre>;
+        }
+
+        var graphOptions = [];
+        var allGraphsTemp = allGraphs();
+        allGraphsTemp.forEach(function(g) {
+            graphOptions.push(
+                <option value={g.key}>{g.name}</option>
+            );
+        });
+
+        return (
+            <div className="container-fluid">
+                <div className="row">
+                  <div className="col-md-6">
+                    <h4>Input</h4>
+                    <select onChange={(e) => this.handleGraphChange(e)} value={this.state.graphValue}>
+                      <option value="select">Select Graph</option>
+                      {graphOptions}
+                   </select>
+                    <textarea className="chart-text" onChange={e => self.handleChange(e)} value={self.state.diagramText}>{self.state.diagramText}</textarea>
+                  </div>
+
+                  <div className="col-md-6">
+                    <h4>Diagram</h4>
+                    {self.state.hasError
+                        ? <><p>Error!</p>{errMsg}</>
+                        : childrenWithProps
+                    }
+                  </div>
               </div>
-          </div>
-        </div>
-    );
-}
+            </div>
+        );
+    }
 }
 
 export default SIPDiagram;
