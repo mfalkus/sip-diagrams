@@ -1,23 +1,18 @@
-import logo from './logo.svg';
 import './App.css';
+import './custom-bs.scss';
+import SIPDiagram from './SIPDiagram';
+import MermaidReact from 'mermaid-react'
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>SIP Diagrams</h1>
       </header>
+
+      <SIPDiagram>
+        <MermaidReact id="coreGraph" />
+      </SIPDiagram>
     </div>
   );
 }
