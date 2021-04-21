@@ -1,5 +1,5 @@
 import React from "react";
-import {allGraphs, graphContent} from './Graphs';
+import {allGraphs, generateGraphContent} from './Graphs';
 
 class SIPDiagram extends React.Component {
   constructor(props) {
@@ -12,10 +12,13 @@ class SIPDiagram extends React.Component {
 
         diagramText: '',
         graphKey: '',
+        graphNames: 'A,B',
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleGraphChange = this.handleGraphChange.bind(this);
+    this.handleUserChange = this.handleUserChange.bind(this);
+    this.drawGraph = this.drawGraph.bind(this);
   }
 
   componentDidCatch(error, info) {
@@ -36,16 +39,30 @@ class SIPDiagram extends React.Component {
     });
   }
 
-    handleGraphChange = (e) => {
-        var key = e.target.value;
-        var graph = graphContent(key);
+    drawGraph = (e) => {
+        var graph = generateGraphContent(this.state.graphKey, this.state.graphNames);
 
         this.setState({
-            graphKey: key,
             diagramText: graph ? graph.content : '',
             hasError: false,
             error: null,
             errorInfo: null,
+        });
+    }
+
+    handleGraphChange = (e) => {
+        var key = e.target.value;
+
+        this.setState({
+            graphKey: key,
+        });
+    }
+
+    handleUserChange = (e) => {
+        var key = e.target.value;
+
+        this.setState({
+            graphNames: key
         });
     }
 
@@ -65,7 +82,7 @@ class SIPDiagram extends React.Component {
         var allGraphsTemp = allGraphs();
         allGraphsTemp.forEach(function(g) {
             graphOptions.push(
-                <option value={g.key}>{g.name}</option>
+                <option key={g.key} value={g.key}>{g.name}</option>
             );
         });
 
@@ -73,11 +90,26 @@ class SIPDiagram extends React.Component {
             <div className="container-fluid">
                 <div className="row">
                   <div className="col-md-6">
-                    <h4>Input</h4>
-                    <select onChange={(e) => this.handleGraphChange(e)} value={this.state.graphValue}>
-                      <option value="select">Select Graph</option>
-                      {graphOptions}
-                   </select>
+                    <h4>Select Call Flow</h4>
+
+                    <div>
+                        <label>User Names (comma list)</label>
+                        <input name="graph-names" type="text" onChange={(e) => this.handleUserChange(e)} value={this.state.graphNames} />
+                    </div>
+
+                    <div>
+                        <label>Call Type</label>
+                        <select onChange={(e) => this.handleGraphChange(e)} value={this.state.graphValue}>
+                          <option value="select">Select Graph</option>
+                          {graphOptions}
+                        </select>
+                    </div>
+                    <div>
+                        <button onClick={(e) => this.drawGraph(e)}>Generate Graph</button>
+                    </div>
+
+                    <hr />
+
                     <textarea className="chart-text" onChange={e => self.handleChange(e)} value={self.state.diagramText}>{self.state.diagramText}</textarea>
                   </div>
 

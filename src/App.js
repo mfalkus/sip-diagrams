@@ -13,6 +13,12 @@ function App() {
       <SIPDiagram>
         <MermaidReact id="coreGraph" />
       </SIPDiagram>
+
+      <footer>
+      <p><strong>About</strong></p>
+      <p>A mini site that aims to make creating typical SIP flows easy in mermaidJS.
+      Also a useful tool for those new to SIP!</p>
+      </footer>
     </div>
   );
 }
