@@ -9,6 +9,7 @@ class SIPDiagram extends React.Component {
         hasError: false,
         error: null,
         errorInfo: null,
+        showGraphText: false,
 
         diagramText: '',
         graphKey: '',
@@ -19,6 +20,7 @@ class SIPDiagram extends React.Component {
     this.handleGraphChange = this.handleGraphChange.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
     this.drawGraph = this.drawGraph.bind(this);
+    this.toggleGraphText = this.toggleGraphText.bind(this);
   }
 
   componentDidCatch(error, info) {
@@ -29,6 +31,12 @@ class SIPDiagram extends React.Component {
         errorInfo: info
     });
   }
+
+    toggleGraphText = (e) => {
+        this.setState(prevState => ({
+              showGraphText: !prevState.showGraphText
+        }));
+    }
 
   handleChange = (e) => {
     this.setState({
@@ -89,8 +97,9 @@ class SIPDiagram extends React.Component {
         return (
             <div className="container-fluid">
                 <div className="row">
-                  <div className="col-md-6">
-                    <h4>Select Call Flow</h4>
+                  <div className="col-md-4">
+                    <h4>Start Here...</h4>
+                    <p><strong>Fill in the form and select a Call Flow</strong></p>
 
                     <div>
                         <label>User Names (comma list)</label>
@@ -110,11 +119,18 @@ class SIPDiagram extends React.Component {
 
                     <hr />
 
-                    <textarea className="chart-text" onChange={e => self.handleChange(e)} value={self.state.diagramText}>{self.state.diagramText}</textarea>
+                    <div>
+                        <button className="link-button" onClick={(e) => this.toggleGraphText(e)}>Toggle Graph Text</button>
+                    </div>
+
+                    {self.state.showGraphText
+                        ?  <textarea className="chart-text" onChange={e => self.handleChange(e)} value={self.state.diagramText}>{self.state.diagramText}</textarea>
+                        : null}
                   </div>
 
-                  <div className="col-md-6">
+                  <div className="col-md-8 diagram-wrapper">
                     <h4>Diagram</h4>
+                    {!self.state.diagramText ? <p>Use the form on the left to generate a call flow</p>:null}
                     {self.state.hasError
                         ? <><p>Error!</p>{errMsg}</>
                         : childrenWithProps

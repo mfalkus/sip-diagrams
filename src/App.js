@@ -7,7 +7,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>SIP Diagrams</h1>
+        <h1>SIP Call Flow Generator</h1>
       </header>
 
       <SIPDiagram>
@@ -15,9 +15,10 @@ function App() {
       </SIPDiagram>
 
       <footer>
-      <p><strong>About</strong></p>
-      <p>A mini site that aims to make creating typical SIP flows easy in mermaidJS.
-      Also a useful tool for those new to SIP!</p>
+          <p><strong>About</strong></p>
+          <p>A mini site that aims to make creating typical SIP flows easy
+          in <a href="https://mermaid-js.github.io/mermaid/#/">mermaidJS</a>.
+          Also a useful tool for those new to SIP!</p>
       </footer>
     </div>
   );
