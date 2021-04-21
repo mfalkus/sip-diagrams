@@ -21,6 +21,8 @@ class SIPDiagram extends React.Component {
     this.handleUserChange = this.handleUserChange.bind(this);
     this.drawGraph = this.drawGraph.bind(this);
     this.toggleGraphText = this.toggleGraphText.bind(this);
+    this.graphReset = this.graphReset.bind(this);
+    this.setGraphContent = this.setGraphContent.bind(this);
   }
 
   componentDidCatch(error, info) {
@@ -32,6 +34,11 @@ class SIPDiagram extends React.Component {
     });
   }
 
+    graphReset = (e) => {
+        var self = this;
+        this.setGraphContent('');
+    }
+
     toggleGraphText = (e) => {
         this.setState(prevState => ({
               showGraphText: !prevState.showGraphText
@@ -39,11 +46,17 @@ class SIPDiagram extends React.Component {
     }
 
   handleChange = (e) => {
+      this.setGraphContent(e.target.value);
+  }
+
+  setGraphContent = (txt, cb) => {
     this.setState({
-        diagramText: e.target.value,
+        diagramText: txt,
         hasError: false,
         error: null,
         errorInfo: null,
+    }, function() {
+        cb && cb();
     });
   }
 
@@ -95,25 +108,27 @@ class SIPDiagram extends React.Component {
         });
 
         return (
-            <div className="container-fluid">
+            <div className="site-content container-fluid">
                 <div className="row">
                   <div className="col-md-4">
                     <h4>Start Here...</h4>
-                    <p><strong>Fill in the form and select a Call Flow</strong></p>
+                    <p><strong>Fill in the form and hit Generate to create a flow diagram.</strong></p>
 
-                    <div>
-                        <label>User Names (comma list)</label>
+                    <div className="form-input">
+                        <label>User Names <small>(comma separated list)</small></label>
+                        <br/>
                         <input name="graph-names" type="text" onChange={(e) => this.handleUserChange(e)} value={this.state.graphNames} />
                     </div>
 
-                    <div>
+                    <div className="form-input">
                         <label>Call Type</label>
+                        <br/>
                         <select onChange={(e) => this.handleGraphChange(e)} value={this.state.graphValue}>
                           <option value="select">Select Graph</option>
                           {graphOptions}
                         </select>
                     </div>
-                    <div>
+                    <div className="form-input">
                         <button onClick={(e) => this.drawGraph(e)}>Generate Graph</button>
                     </div>
 
@@ -121,6 +136,8 @@ class SIPDiagram extends React.Component {
 
                     <div>
                         <button className="link-button" onClick={(e) => this.toggleGraphText(e)}>Toggle Graph Text</button>
+                        &nbsp;
+                        <button className="link-button" onClick={(e) => this.graphReset(e)}>Reset Graph</button>
                     </div>
 
                     {self.state.showGraphText
@@ -129,11 +146,9 @@ class SIPDiagram extends React.Component {
                   </div>
 
                   <div className="col-md-8 diagram-wrapper">
-                    <h4>Diagram</h4>
-                    {!self.state.diagramText ? <p>Use the form on the left to generate a call flow</p>:null}
                     {self.state.hasError
                         ? <><p>Error!</p>{errMsg}</>
-                        : childrenWithProps
+                        : (self.state.diagramText ? childrenWithProps : null)
                     }
                   </div>
               </div>

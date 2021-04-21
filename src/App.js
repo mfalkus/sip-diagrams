@@ -5,7 +5,7 @@ import MermaidReact from 'mermaid-react'
 
 function App() {
   return (
-    <div className="App">
+    <>
       <header className="App-header">
         <h1>SIP Call Flow Generator</h1>
       </header>
@@ -20,7 +20,7 @@ function App() {
           in <a href="https://mermaid-js.github.io/mermaid/#/">mermaidJS</a>.
           Also a useful tool for those new to SIP!</p>
       </footer>
-    </div>
+    </>
   );
 }
 
