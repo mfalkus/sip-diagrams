@@ -61,14 +61,24 @@ class SIPDiagram extends React.Component {
   }
 
     drawGraph = (e) => {
-        var graph = generateGraphContent(this.state.graphKey, this.state.graphNames);
+        try {
+            var graph = generateGraphContent(this.state.graphKey, this.state.graphNames);
 
-        this.setState({
-            diagramText: graph ? graph.content : '',
-            hasError: false,
-            error: null,
-            errorInfo: null,
-        });
+            this.setState({
+                diagramText: graph ? graph.content : '',
+                hasError: false,
+                error: null,
+                errorInfo: null,
+            });
+        } catch (err) {
+            this.setState({
+                diagramText: '',
+                hasError: true,
+                error: err,
+                errorInfo: err,
+            });
+        }
+
     }
 
     handleGraphChange = (e) => {
@@ -95,8 +105,8 @@ class SIPDiagram extends React.Component {
         });
 
         var errMsg = null;
-        if (self.state.hasError && self.state.error && self.state.error.message) {
-            errMsg = <pre>{self.state.error.message}</pre>;
+        if (self.state.hasError && self.state.error) {
+            errMsg = <pre>{self.state.error.message ? self.state.error.message : self.state.error}</pre>;
         }
 
         var graphOptions = [];

@@ -2,22 +2,7 @@ var graphs = [
     {
         key: 'a_b_pbx',
         name: 'A->B PBX',
-        sampleContent: `
-sequenceDiagram
-participant Phone A
-participant PBX
-participant Phone B
-Phone A->>PBX: INVITE
-PBX->>Phone B: INVITE
-Phone B-->>PBX: 100 Trying
-PBX-->>Phone A: 100 Trying
-Phone B-->>PBX: 180 Ringing
-PBX-->>Phone A: 180 Ringing
-Phone B-->>PBX: 200 OK
-PBX-->>Phone A: 200 OK
-Phone A->>PBX: ACK
-PBX->>Phone B: ACK
-`,
+        min_nodes: 2,
         sections: [
             {
                 type: 'request',
@@ -45,24 +30,7 @@ PBX->>Phone B: ACK
     {
         key: 'a_b_pbx_cancel',
         name: 'A->B PBX Cancel',
-        content: `
-sequenceDiagram
-participant Phone A
-participant PBX
-participant Phone B
-Phone A->>PBX: INVITE
-PBX->>Phone B: INVITE
-Phone B-->>PBX: 100 Trying
-PBX-->>Phone A: 100 Trying
-Phone A->>PBX: CANCEL
-PBX->>Phone B: CANCEL
-Phone B-->>PBX: 200 OK (CANCEL)
-PBX-->>Phone A: 200 OK (CANCEL)
-Phone B-->>PBX: 487 (INVITE)
-PBX-->>Phone A: 487 (INVITE)
-Phone A->>PBX: ACK
-PBX->>Phone B: ACK
-`,
+        min_nodes: 2,
         sections: [
             {
                 type: 'request',
@@ -71,6 +39,10 @@ PBX->>Phone B: ACK
             {
                 type: 'response',
                 label: '100 Trying'
+            },
+            {
+                type: 'response',
+                label: '180 Ringing'
             },
             {
                 type: 'request',
@@ -93,6 +65,7 @@ PBX->>Phone B: ACK
     {
         key: 'auth_challenge',
         name: 'Auth Challenge',
+        min_nodes: 3,
         content: `
 sequenceDiagram
 participant Phone A
@@ -110,7 +83,27 @@ Note over PBX, Phone A: Call continues as normal
         sections: [
             {
                 type: 'request',
-                label: 'INVITE'
+                label: 'INVITE',
+                limit_nodes: 1
+            },
+            {
+                type: 'response',
+                label: '100 Trying',
+                limit_nodes: 1
+            },
+            {
+                type: 'response',
+                label: '407 Requires Auth',
+                limit_nodes: 1
+            },
+            {
+                type: 'request',
+                label: 'ACK',
+                limit_nodes: 1
+            },
+            {
+                type: 'request',
+                label: 'INVITE (AUTH)',
             },
             {
                 type: 'response',
@@ -141,9 +134,9 @@ export function graphContent(k) {
 }
 
 export function generateGraphContent(k,n) {
-    var names = n.split(',');
+    var allNames = n.split(',');
 
-    if (names.length < 2) {
+    if (allNames.length < 2) {
         throw "Not enough user names/nodes supplied.";
     }
 
@@ -151,7 +144,7 @@ export function generateGraphContent(k,n) {
     var content = `
 sequenceDiagram
 `;
-    names.forEach(function(n) {
+    allNames.forEach(function(n) {
         content += "participant " + n + "\n";
     });
 
@@ -161,9 +154,19 @@ sequenceDiagram
         throw "Unknown recipe " + k;
     }
 
+    if (graphRecipe.min_nodes > allNames.length) {
+        throw "Not enough nodes to draw graph, requires " + graphRecipe.min_nodes;
+    }
+
     var sections = graphRecipe.sections;
 
     sections.forEach(function(s) {
+        let names = allNames;
+        if (s.hasOwnProperty('limit_nodes')) {
+            // In the future if we want to do an offset this is the place.
+            names = allNames.slice(0, s.limit_nodes+1);
+        }
+
         let pkt = '';
 
         let direction = (s.type === 'request' ? 'forward' : 'backward');
