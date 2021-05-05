@@ -67,6 +67,7 @@ var graphs = [
     {
         key: 'auth_challenge',
         name: 'Auth Challenge',
+        nodes: 'A,PBX,Mobile',
         min_nodes: 3,
         content: `
 sequenceDiagram
