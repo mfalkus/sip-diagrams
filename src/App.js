@@ -2,12 +2,20 @@ import './App.css';
 import './custom-bs.scss';
 import SIPDiagram from './SIPDiagram';
 import MermaidReact from 'mermaid-react'
+import { faPhone } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function App() {
   return (
     <>
       <header className="App-header">
-        <h1>SIP Call Flow Generator</h1>
+        <h1>
+        <FontAwesomeIcon icon={faPhone} flip="horizontal"  inverse />
+        &nbsp;
+        SIP Call Flow Generator
+        &nbsp;
+        <FontAwesomeIcon icon={faPhone}  inverse />
+        </h1>
       </header>
 
       <SIPDiagram>

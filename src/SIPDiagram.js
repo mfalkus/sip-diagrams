@@ -122,13 +122,7 @@ class SIPDiagram extends React.Component {
                 <div className="row">
                   <div className="col-md-4">
                     <h4>Start Here...</h4>
-                    <p><strong>Fill in the form and hit Generate to create a flow diagram.</strong></p>
-
-                    <div className="form-input">
-                        <label>User Names <small>(comma separated list)</small></label>
-                        <br/>
-                        <input name="graph-names" type="text" onChange={(e) => this.handleUserChange(e)} value={this.state.graphNames} />
-                    </div>
+                    <p><strong>Select the type of call flow you want to view:</strong></p>
 
                     <div className="form-input">
                         <label>Call Type</label>
@@ -138,6 +132,13 @@ class SIPDiagram extends React.Component {
                           {graphOptions}
                         </select>
                     </div>
+
+                    <div className="form-input">
+                        <label>Optional: Alter Node Names <small>(comma separated list)</small></label>
+                        <br/>
+                        <input name="graph-names" type="text" onChange={(e) => this.handleUserChange(e)} value={this.state.graphNames} />
+                    </div>
+
                     <div className="form-input">
                         <button onClick={(e) => this.drawGraph(e)}>Generate Graph</button>
                     </div>
