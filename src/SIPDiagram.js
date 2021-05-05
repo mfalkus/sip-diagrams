@@ -1,5 +1,5 @@
 import React from "react";
-import {allGraphs, generateGraphContent} from './Graphs';
+import {allGraphs, generateGraphContent, getGraphRecipe} from './Graphs';
 
 class SIPDiagram extends React.Component {
   constructor(props) {
@@ -83,9 +83,15 @@ class SIPDiagram extends React.Component {
 
     handleGraphChange = (e) => {
         var key = e.target.value;
+        var graph = getGraphRecipe(key);
+        var nodes = 'A,B'; // default
+        if (graph && graph.nodes) {
+            nodes = graph.nodes;
+        }
 
         this.setState({
             graphKey: key,
+            graphNames: nodes,
         });
     }
 

@@ -2,6 +2,7 @@ var graphs = [
     {
         key: 'a_b_pbx',
         name: 'A->B PBX',
+        nodes: 'A,PBX,B',
         min_nodes: 2,
         sections: [
             {
@@ -29,7 +30,8 @@ var graphs = [
 
     {
         key: 'a_b_pbx_cancel',
-        name: 'A->B PBX Cancel',
+        name: 'A->C PBX Cancel',
+        nodes: 'A,PBX,C',
         min_nodes: 2,
         sections: [
             {
@@ -129,7 +131,7 @@ export function allGraphs() {
     return graphs;
 }
 
-export function graphContent(k) {
+export function getGraphRecipe(k) {
     return graphs.find(x => x.key === k);
 }
 
@@ -148,7 +150,7 @@ sequenceDiagram
         content += "participant " + n + "\n";
     });
 
-    var graphRecipe = graphContent(k);
+    var graphRecipe = getGraphRecipe(k);
 
     if (!graphRecipe) {
         throw "Unknown recipe " + k;
