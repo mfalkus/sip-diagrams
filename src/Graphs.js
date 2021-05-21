@@ -329,7 +329,7 @@ export function generateGraphContent(k,n) {
     var graphRecipe = getGraphRecipe(k);
 
     if (!graphRecipe) {
-        throw "Unknown recipe " + k;
+        throw new Error("Unknown recipe " + k);
     }
 
     var content = '';
@@ -350,7 +350,7 @@ function generateGraphText(graphRecipe, n) {
     var allNames = n.split(',');
 
     if (allNames.length < 2) {
-        throw "Not enough user names/nodes supplied.";
+        throw new Error("Not enough user names/nodes supplied.");
     }
 
     // All our diagrams are sequence diagrams in mermaid
@@ -362,7 +362,7 @@ sequenceDiagram
     });
 
     if (graphRecipe.min_nodes > allNames.length) {
-        throw "Not enough nodes to draw graph, requires " + graphRecipe.min_nodes;
+        throw new Error("Not enough nodes to draw graph, requires " + graphRecipe.min_nodes);
     }
 
     var sections = graphRecipe.sections;

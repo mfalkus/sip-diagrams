@@ -46,7 +46,6 @@ class SIPDiagram extends React.Component {
   }
 
     graphReset = (e) => {
-        var self = this;
         this.setGraphContent('');
     }
 
