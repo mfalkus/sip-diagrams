@@ -204,7 +204,7 @@ var graphs = [
     {
         key: 'blind_transfer_challenge',
         name: 'Blind Transfer',
-        nodes: 'A,PBX,B,PBX,C',
+        nodes: 'A,PBX,B,C',
         static_content: `
 sequenceDiagram
 participant A
@@ -239,6 +239,62 @@ B-->>PBX: NOTIFY 200 OK
 Note over A, C: A and C are now connected,<br>The PBX can hang up on original B leg.
 PBX->>B: BYE
 B-->>PBX: 200 OK
+Note over A, C: Sometime later A hangs up the call to C.
+A->>PBX: BYE
+PBX->>C: BYE
+C-->>PBX: 200 OK
+PBX-->>A: 200 OK`,
+        min_nodes: 4,
+    },
+    {
+        key: 'consult_transfer_challenge',
+        name: 'Consult Transfer',
+        nodes: 'A,PBX,B,C',
+        static_content: `
+sequenceDiagram
+participant A
+participant PBX
+participant B
+participant C
+A->>PBX: INVITE
+PBX->>B: INVITE
+B-->>PBX: 100 Trying
+PBX-->>A: 100 Trying
+B-->>PBX: 180 Trying
+PBX-->>A: 180 Trying
+B-->>PBX: 200 OK
+PBX-->>A: 200 OK
+A->>PBX: ACK
+PBX->>B: ACK
+Note over A, B: Call is now in progress...
+Note over A, B: B wants to consult with C, this is a brand new call
+Note over A, B: B puts A on hold (with reINVITE, inactive media)
+B->>PBX: INVITE
+PBX->>A: INVITE
+A-->>PBX: 200 OK
+PBX-->>B: 200 OK
+B->>PBX: ACK
+PBX->>A: ACK
+Note over A, B: B can now start consult leg
+B->>PBX: INVITE
+PBX-->>B: 100 Trying
+PBX->>C: INVITE
+C-->>PBX: 100 Trying
+C-->>PBX: 180 Ringing
+PBX-->>B: 180 Ringing
+C-->>PBX: 200 OK
+PBX-->>B: 200 OK
+B->>PBX: ACK
+PBX->>C: ACK
+Note over PBX, C: Consult call now in progress
+Note over PBX, C: C wants to take the call with A
+
+B->>PBX: REFER (Refer-to: Replaces)
+Note over PBX, C: Refer has 'replaces' so the PBX knows to merge the call with A
+PBX-->>B: 202 Accepted
+Note over A, C: A and C are now connected,<br>The PBX can hang up on original B leg.
+PBX->>B: BYE
+PBX-->>B: 200 OK
 Note over A, C: Sometime later A hangs up the call to C.
 A->>PBX: BYE
 PBX->>C: BYE
