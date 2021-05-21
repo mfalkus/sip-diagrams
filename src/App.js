@@ -25,8 +25,9 @@ function App() {
       <footer>
           <p><strong>About</strong></p>
           <p>A mini site that aims to make creating typical SIP flows easy
-          in <a href="https://mermaid-js.github.io/mermaid/#/">mermaidJS</a>.
-          Also a useful tool for those new to SIP!</p>
+          by using the brilliant <a href="https://mermaid-js.github.io/mermaid/#/">mermaid</a> graph library.
+          New to SIP and after the full detail? Check out <a
+          href="https://datatracker.ietf.org/doc/html/rfc3261">RFC 3261</a>.</p>
       </footer>
     </>
   );

@@ -1,3 +1,13 @@
+/**
+ * Render call flow list and call flow diagram.
+ *
+ * Nothing special in the form, but note that the mermaid render needs to be
+ * passed in as a child object. This component will catch errors from children,
+ * which is required as the mermaid lib will throw for bad syntax. This way we
+ * can disable a neat error to the user without bricking the page.
+ *
+ */
+
 import React from "react";
 import {allGraphs, generateGraphContent, getGraphRecipe} from './Graphs';
 

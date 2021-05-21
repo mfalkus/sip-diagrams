@@ -1,3 +1,16 @@
+/**
+ * 'library' of SIP Call flows
+ *
+ * Library is a bit of a stretch as it's only a handful.
+ *
+ * Note that some are dynamically generated. These are the ones which have
+ * `sections` instead of `static_content`. Originally I liked the idea of
+ * making all of them dynamic but ran out of time. The dynamic ones allow
+ * you to change the node names and also add in extra nodes. This might give
+ * non-sensical results but it's kind of interesting.
+ *
+ */
+
 var graphs = [
     {
         key: 'a_b_pbx',
