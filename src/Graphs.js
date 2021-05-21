@@ -1,7 +1,7 @@
 var graphs = [
     {
         key: 'a_b_pbx',
-        name: 'A->B PBX',
+        name: 'Alice calls Bob (PBX)',
         nodes: 'A,PBX,B',
         min_nodes: 2,
         sections: [
@@ -25,12 +25,101 @@ var graphs = [
                 type: 'request',
                 label: 'ACK'
             },
+            {
+                type: 'note',
+                label: 'Call is now in progress...'
+            },
+            {
+                type: 'request',
+                label: 'BYE'
+            },
+            {
+                type: 'response',
+                label: '200 OK'
+            },
+        ],
+    },
+
+    {
+        key: 'a_b_pbx_2',
+        name: 'Alice calls Bob (Early Media) (PBX)',
+        nodes: 'A,PBX,B',
+        min_nodes: 2,
+        sections: [
+            {
+                type: 'request',
+                label: 'INVITE'
+            },
+            {
+                type: 'response',
+                label: '100 Trying'
+            },
+            {
+                type: 'response',
+                label: '183 Ringing'
+            },
+            {
+                type: 'note',
+                label: 'Caller is now getting ringing (or other early media)'
+            },
+            {
+                type: 'response',
+                label: '200 OK'
+            },
+            {
+                type: 'request',
+                label: 'ACK'
+            },
+            {
+                type: 'note',
+                label: 'Call is now in progress...'
+            },
+            {
+                type: 'request',
+                label: 'BYE'
+            },
+            {
+                type: 'response',
+                label: '200 OK'
+            },
+        ],
+    },
+
+    {
+        key: 'a_b_pbx_3',
+        name: 'Alice calls Bob (30 Second Broken) (PBX)',
+        nodes: 'A,PBX,B',
+        min_nodes: 2,
+        sections: [
+            {
+                type: 'request',
+                label: 'INVITE'
+            },
+            {
+                type: 'response',
+                label: '100 Trying'
+            },
+            {
+                type: 'response',
+                label: '183 Ringing'
+            },
+            {
+                type: 'response',
+                label: '200 OK'
+            },
+            {
+                type: 'note',
+                // No ACK is sent - an ACK is only sent in
+                //    response to a response to an INVITE request.
+                label: 'Call is now in progress, but without an ACK the caller agent doesn\'t _know_.<br>'
+                    + 'Usually 30 seconds grace for the ACK to arrive, otherwise tear down the call.'
+            }
         ],
     },
 
     {
         key: 'a_b_pbx_cancel',
-        name: 'A->C PBX Cancel',
+        name: 'Alice calls Bob, Cancels',
         nodes: 'A,PBX,C',
         min_nodes: 2,
         sections: [
@@ -69,20 +158,6 @@ var graphs = [
         name: 'Auth Challenge',
         nodes: 'A,PBX,Mobile',
         min_nodes: 3,
-        content: `
-sequenceDiagram
-participant Phone A
-participant PBX
-Phone A->>PBX: INVITE
-PBX-->>Phone A: 100 Trying
-PBX-->>Phone A: 407 Auth Required
-Phone A->>PBX: ACK
-Note over PBX, Phone A: New CSEQ, WWW-Auth header
-Phone A->>PBX: INVITE (AUTH)
-PBX-->>Phone A: 100 Trying
-PBX-->>Phone A: 180 Ringing
-Note over PBX, Phone A: Call continues as normal
-`,
         sections: [
             {
                 type: 'request',
@@ -126,6 +201,51 @@ Note over PBX, Phone A: Call continues as normal
             },
         ],
     },
+    {
+        key: 'blind_transfer_challenge',
+        name: 'Blind Transfer',
+        nodes: 'A,PBX,B,PBX,C',
+        static_content: `
+sequenceDiagram
+participant A
+participant PBX
+participant B
+participant C
+A->>PBX: INVITE
+PBX->>B: INVITE
+B-->>PBX: 100 Trying
+PBX-->>A: 100 Trying
+B-->>PBX: 180 Trying
+PBX-->>A: 180 Trying
+B-->>PBX: 200 OK
+PBX-->>A: 200 OK
+A->>PBX: ACK
+PBX->>B: ACK
+Note over A, B: Call is now in progress...
+B->>PBX: REFER
+PBX-->>B: 202 Accepted
+PBX->>C: INVITE
+C-->>PBX: 100 Trying
+Note over PBX, C: REFER creates an implicit subscription to the progress of the transfer.
+PBX->>B: NOTIFY (100 Trying)
+B-->>PBX: NOTIFY 200 OK
+C-->>PBX: 180 Ringing
+PBX->>B: NOTIFY (180 Ringing)
+B-->>PBX: NOTIFY 200 OK
+C-->>PBX: 200 OK
+PBX->>C: ACK
+PBX->>B: NOTIFY (200 OK)
+B-->>PBX: NOTIFY 200 OK
+Note over A, C: A and C are now connected,<br>The PBX can hang up on original B leg.
+PBX->>B: BYE
+B-->>PBX: 200 OK
+Note over A, C: Sometime later A hangs up the call to C.
+A->>PBX: BYE
+PBX->>C: BYE
+C-->>PBX: 200 OK
+PBX-->>A: 200 OK`,
+        min_nodes: 4,
+    },
 ];
 
 export function allGraphs() {
@@ -137,6 +257,27 @@ export function getGraphRecipe(k) {
 }
 
 export function generateGraphContent(k,n) {
+    var graphRecipe = getGraphRecipe(k);
+
+    if (!graphRecipe) {
+        throw "Unknown recipe " + k;
+    }
+
+    var content = '';
+    if (graphRecipe.hasOwnProperty('static_content')) {
+        content = graphRecipe.static_content;
+    } else {
+        content = generateGraphText(graphRecipe, n);
+    }
+
+    return {
+        key: k,
+        name: graphRecipe.name,
+        content: content,
+    }
+}
+
+function generateGraphText(graphRecipe, n) {
     var allNames = n.split(',');
 
     if (allNames.length < 2) {
@@ -151,12 +292,6 @@ sequenceDiagram
         content += "participant " + n + "\n";
     });
 
-    var graphRecipe = getGraphRecipe(k);
-
-    if (!graphRecipe) {
-        throw "Unknown recipe " + k;
-    }
-
     if (graphRecipe.min_nodes > allNames.length) {
         throw "Not enough nodes to draw graph, requires " + graphRecipe.min_nodes;
     }
@@ -166,13 +301,18 @@ sequenceDiagram
     sections.forEach(function(s) {
         let names = allNames;
         if (s.hasOwnProperty('limit_nodes')) {
-            // In the future if we want to do an offset this is the place.
-            names = allNames.slice(0, s.limit_nodes+1);
+            let offset = 0;
+            if (s.hasOwnProperty('offset')) {
+                offset = s.offset;
+            }
+            let length = s.limit_nodes + 1 + offset;
+            console.log("Length: ", length, "Offset: ", offset);
+            names = allNames.slice(offset, length);
         }
 
         let pkt = '';
 
-        let direction = (s.type === 'request' ? 'forward' : 'backward');
+        let direction = (s.type === 'request' || s.type === 'note' ? 'forward' : 'backward');
         if (s.hasOwnProperty('direction')) {
             direction = s.direction;
         }
@@ -181,6 +321,16 @@ sequenceDiagram
         let link = (s.type === 'request' ? '->>' : '-->>');
         if (s.hasOwnProperty('link')) {
             link = s.link;
+        }
+
+        /**
+         * Special case 'notes', which stretch over all nodes
+         **/
+        if (s.type === 'note') {
+            let startName = names[0];
+            let endName = names[names.length - 1];
+            content += "Note over " + startName + ", " + endName  + ": " + s.label + "\n";
+            return;
         }
 
         // Set first pair of names manually so loop is clean
@@ -206,11 +356,7 @@ sequenceDiagram
         content += pkt;
     });
 
-    return {
-        key: 'auth_challenge',
-        name: 'Auth Challenge',
-        content: content,
-    }
+    return content;
 }
 
 

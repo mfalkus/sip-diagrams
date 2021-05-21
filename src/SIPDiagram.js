@@ -14,6 +14,7 @@ class SIPDiagram extends React.Component {
         diagramText: '',
         graphKey: '',
         graphNames: 'A,B',
+        graphNameDisabled: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -85,13 +86,18 @@ class SIPDiagram extends React.Component {
         var key = e.target.value;
         var graph = getGraphRecipe(key);
         var nodes = 'A,B'; // default
+        var disabled = false;
         if (graph && graph.nodes) {
             nodes = graph.nodes;
+        }
+        if (graph && graph.static_content) {
+            disabled = true;
         }
 
         this.setState({
             graphKey: key,
             graphNames: nodes,
+            graphNameDisabled: disabled,
         });
     }
 
@@ -142,7 +148,7 @@ class SIPDiagram extends React.Component {
                     <div className="form-input">
                         <label>Optional: Alter Node Names <small>(comma separated list)</small></label>
                         <br/>
-                        <input name="graph-names" type="text" onChange={(e) => this.handleUserChange(e)} value={this.state.graphNames} />
+                        <input disabled={this.state.graphNameDisabled} name="graph-names" type="text" onChange={(e) => this.handleUserChange(e)} value={this.state.graphNames} />
                     </div>
 
                     <div className="form-input">
