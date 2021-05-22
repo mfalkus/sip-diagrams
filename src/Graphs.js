@@ -215,6 +215,37 @@ var graphs = [
         ],
     },
     {
+        key: 'prack_example',
+        name: 'PRACK Example',
+        nodes: 'A,PBX,B',
+        static_content: `
+sequenceDiagram
+participant A
+participant PBX
+participant B
+Note over A, PBX: UDP with 100rel
+A->>PBX: INVITE
+PBX-->>A: 100 Trying
+Note over PBX, B: TCP, so no 100rel
+PBX->>B: INVITE
+B-->>PBX: 100 Trying
+B-->>PBX: 180 Trying
+PBX-->>A: 180 Trying (Cseq n)
+Note over A, B: A sends a requst to confirm it got the 180 Trying
+A->>PBX: PRACK (Rseq n)
+PBX-->>A: 200 OK
+B-->>PBX: 200 OK
+PBX-->>A: 200 OK
+A->>PBX: ACK
+PBX->>B: ACK
+Note over A, B: Call is now in progress...
+A->>PBX: BYE
+PBX->>B: BYE
+B-->>PBX: 200 OK
+PBX-->>A: 200 OK`,
+        min_nodes: 4,
+    },
+    {
         key: 'blind_transfer_challenge',
         name: 'Blind Transfer',
         nodes: 'A,PBX,B,C',
