@@ -28,7 +28,7 @@ var graphs = [
             },
             {
                 type: 'response',
-                label: '180 Trying'
+                label: '180 Ringing'
             },
             {
                 type: 'response',
@@ -69,7 +69,7 @@ var graphs = [
             },
             {
                 type: 'response',
-                label: '183 Ringing'
+                label: '183 Session Progress'
             },
             {
                 type: 'note',
@@ -114,7 +114,7 @@ var graphs = [
             },
             {
                 type: 'response',
-                label: '183 Ringing'
+                label: '183 Session Progress'
             },
             {
                 type: 'response',
@@ -202,7 +202,7 @@ var graphs = [
             },
             {
                 type: 'response',
-                label: '180 Trying'
+                label: '180 Ringing'
             },
             {
                 type: 'response',
@@ -229,9 +229,9 @@ PBX-->>A: 100 Trying
 Note over PBX, B: TCP, so no 100rel
 PBX->>B: INVITE
 B-->>PBX: 100 Trying
-B-->>PBX: 180 Trying
-PBX-->>A: 180 Trying (Cseq n)
-Note over A, B: A sends a requst to confirm it got the 180 Trying
+B-->>PBX: 180 Ringing
+PBX-->>A: 180 Ringing (Cseq n)
+Note over A, B: A sends a requst to confirm it got the 180 Ringing
 A->>PBX: PRACK (Rseq n)
 PBX-->>A: 200 OK
 B-->>PBX: 200 OK
@@ -256,11 +256,11 @@ participant PBX
 participant B
 participant C
 A->>PBX: INVITE
+PBX-->>A: 100 Trying
 PBX->>B: INVITE
 B-->>PBX: 100 Trying
-PBX-->>A: 100 Trying
-B-->>PBX: 180 Trying
-PBX-->>A: 180 Trying
+B-->>PBX: 180 Ringing
+PBX-->>A: 180 Ringing
 B-->>PBX: 200 OK
 PBX-->>A: 200 OK
 A->>PBX: ACK
@@ -301,11 +301,11 @@ participant PBX
 participant B
 participant C
 A->>PBX: INVITE
+PBX-->>A: 100 Trying
 PBX->>B: INVITE
 B-->>PBX: 100 Trying
-PBX-->>A: 100 Trying
-B-->>PBX: 180 Trying
-PBX-->>A: 180 Trying
+B-->>PBX: 180 Ringing
+PBX-->>A: 180 Ringing
 B-->>PBX: 200 OK
 PBX-->>A: 200 OK
 A->>PBX: ACK
