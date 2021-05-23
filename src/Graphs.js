@@ -168,7 +168,7 @@ var graphs = [
     },
     {
         key: 'auth_challenge',
-        name: 'Auth Challenge',
+        name: 'Call with Auth Challenge',
         nodes: 'A,PBX,Mobile',
         min_nodes: 3,
         sections: [
@@ -345,6 +345,67 @@ PBX->>C: BYE
 C-->>PBX: 200 OK
 PBX-->>A: 200 OK`,
         min_nodes: 4,
+    },
+    {
+        key: 'register_auth_challenge',
+        name: 'Register with Auth Challenge',
+        nodes: 'A,PBX',
+        min_nodes: 2,
+        sections: [
+            {
+                type: 'request',
+                label: 'REGISTER',
+                limit_nodes: 1
+            },
+            {
+                type: 'response',
+                label: '407 Requires Auth',
+                limit_nodes: 1
+            },
+            {
+                type: 'note',
+                label: '407 above will include a nonce to<br>'
+                     + 'be used for generating auth header'
+            },
+            {
+                type: 'request',
+                label: 'REGISTER (AUTH)',
+                limit_nodes: 1
+            },
+            {
+                type: 'response',
+                label: '200 OK',
+                limit_nodes: 1
+            },
+            {
+                type: 'note',
+                label: 'No ACK required, ACKs only for INVITE.'
+            },
+        ],
+    },
+    {
+        key: 'options',
+        name: 'Options',
+        nodes: 'A,PBX',
+        min_nodes: 2,
+        sections: [
+            {
+                type: 'note',
+                label: 'OPTIONs often used for keep-alives'
+            },
+            {
+                type: 'request',
+                label: 'OPTIONS',
+            },
+            {
+                type: 'response',
+                label: '200 OK'
+            },
+            {
+                type: 'note',
+                label: 'No ACK required...'
+            },
+        ],
     },
 ];
 
