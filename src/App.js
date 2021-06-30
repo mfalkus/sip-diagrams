@@ -12,7 +12,7 @@ function App() {
         <h1>
         <FontAwesomeIcon icon={faPhone} flip="horizontal"  inverse />
         &nbsp;
-        SIP Call Flow Generator
+        SIP Diagrams - Sequence Call Flow Generator
         &nbsp;
         <FontAwesomeIcon icon={faPhone}  inverse />
         </h1>
