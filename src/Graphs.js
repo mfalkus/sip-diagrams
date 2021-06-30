@@ -14,7 +14,7 @@
 var graphs = [
     {
         key: 'a_b_pbx',
-        name: 'Alice calls Bob (PBX)',
+        name: 'Standard Call (PBX)',
         nodes: 'A,PBX,B',
         min_nodes: 2,
         sections: [
@@ -55,7 +55,7 @@ var graphs = [
 
     {
         key: 'a_b_pbx_2',
-        name: 'Alice calls Bob (Early Media) (PBX)',
+        name: 'Standard Call (Early Media) (PBX)',
         nodes: 'A,PBX,B',
         min_nodes: 2,
         sections: [
@@ -100,7 +100,7 @@ var graphs = [
 
     {
         key: 'a_b_pbx_3',
-        name: 'Alice calls Bob (30 Second Broken) (PBX)',
+        name: 'Standard Call (30 Second Broken) (PBX)',
         nodes: 'A,PBX,B',
         min_nodes: 2,
         sections: [
@@ -132,7 +132,7 @@ var graphs = [
 
     {
         key: 'a_b_pbx_cancel',
-        name: 'Alice calls Bob, Cancels',
+        name: 'Call with Cancel',
         nodes: 'A,PBX,C',
         min_nodes: 2,
         sections: [
@@ -406,6 +406,78 @@ PBX-->>A: 200 OK`,
                 label: 'No ACK required...'
             },
         ],
+    },
+    {
+        key: 'unknown_number',
+        name: 'Unknown Number (404)',
+        nodes: 'A,PBX',
+        static_content: `
+sequenceDiagram
+participant A
+participant PBX
+A->>PBX: INVITE
+PBX-->>A: 100 Trying
+PBX-->>A: 404 Not Found
+Note over A, PBX: 404 typically means number was unknown
+A->>PBX: ACK
+`,
+        min_nodes: 2,
+    },
+    {
+        key: 'invalid_number',
+        name: 'Forbidden Number (403)',
+        nodes: 'A,PBX',
+        static_content: `
+sequenceDiagram
+participant A
+participant PBX
+A->>PBX: INVITE
+PBX-->>A: 100 Trying
+PBX-->>A: 403 Forbidden
+Note over A, PBX: Possibly high-cost number or unauth'd user
+A->>PBX: ACK
+`,
+        min_nodes: 2,
+    },
+    {
+        key: 'click_to_dial',
+        name: 'Click-To-Dial',
+        nodes: 'Dialer,PBX,B,C',
+        static_content: `
+sequenceDiagram
+participant Dialer
+participant PBX
+participant B
+participant C
+Dialer->>PBX: INVITE
+PBX-->>Dialer: 100 Trying
+PBX->>B: INVITE
+B-->>PBX: 100 Trying
+B-->>PBX: 180 Ringing
+PBX-->>Dialer: 180 Ringing
+B-->>PBX: 200 OK
+PBX-->>Dialer: 200 OK
+Dialer->>PBX: ACK 
+PBX->>B: ACK
+Note over Dialer, B: First/main user connected, now ready for 'real' outbound leg
+Note over Dialer, B: Click-to-dial typically sends REFER from same node as INVITE
+Dialer->>PBX: REFER
+PBX-->>Dialer: 202 Accepted
+PBX->>C: INVITE
+C-->>PBX: 100 Trying
+Note over PBX, C: REFER's NOTIFY packets skipped on this diagram...
+C-->>PBX: 180 Ringing
+C-->>PBX: 200 OK
+PBX->>C: ACK
+Note over B, C: B and C are now connected,<br>The PBX can hang up on original dialer.
+PBX->>Dialer: BYE
+Dialer-->>PBX: 200 OK
+Note over B, C: Sometime later B hangs up the call to C.
+B->>PBX: BYE
+PBX->>C: BYE
+C-->>PBX: 200 OK
+PBX-->>B: 200 OK`,
+        min_nodes: 4,
     },
 ];
 
