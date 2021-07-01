@@ -24,9 +24,14 @@ function App() {
 
       <footer>
         <p><strong>About</strong></p>
-        <p>A mini site that aims to make creating typical SIP flows easy by
+        <p>A mini site that aims to make creating typical SIP flow diagrams easy by
           using the brilliant <a
           href="https://mermaid-js.github.io/mermaid/#/">mermaid</a> graph library.
+            For a mini blog post about the origin of this project
+            see <a href="https://falkus.co/2021/06/sip-diamgrams-with-mermaid">this
+            falkus.co blog post</a>.
+            To report any bugs or suggest improvements head to the
+            GitHub <a href="https://github.com/mfalkus/sip-diagrams">repo</a>.
           </p>
       <p>Helpful links:</p>
         <ul>
