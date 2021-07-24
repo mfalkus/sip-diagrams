@@ -35,7 +35,7 @@ footer {
 }
 
 .link-button {
-    padding: 1px;
+    padding: 1px 2px;
     border: 0;
     background: transparent;
     border: 1px solid transparent;
@@ -44,6 +44,10 @@ footer {
 .link-button:hover {
     border: 1px solid black;
     opacity: 0.9;
+}
+.link-button:disabled,
+.link-button:hover:disabled {
+    border: none;
 }
 .diagram-wrapper {
     text-align: center;

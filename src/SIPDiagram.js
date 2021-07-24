@@ -11,6 +11,9 @@
 import React from "react";
 import {allGraphs, generateGraphContent, getGraphRecipe} from './Graphs';
 
+// Formatted so it accepts the base64 encoded string immediately appended
+const MermaidLiveEditURL = 'https://mermaid-js.github.io/mermaid-live-editor/edit/#';
+
 class SIPDiagram extends React.Component {
   constructor(props) {
     super(props);
@@ -33,6 +36,7 @@ class SIPDiagram extends React.Component {
     this.drawGraph = this.drawGraph.bind(this);
     this.toggleGraphText = this.toggleGraphText.bind(this);
     this.graphReset = this.graphReset.bind(this);
+    this.graphExport = this.graphExport.bind(this);
     this.setGraphContent = this.setGraphContent.bind(this);
   }
 
@@ -47,6 +51,25 @@ class SIPDiagram extends React.Component {
 
     graphReset = (e) => {
         this.setGraphContent('');
+    }
+
+    graphExport = (e) => {
+        var j = JSON.stringify(
+            // Based on the default string encoded when you fire up the Mermaid online editor
+            // See https://github.com/mermaid-js/mermaid-live-editor
+            {
+                code: "%% Generated at " + window.location.href + "\n"
+                    + this.state.diagramText,
+                // default, forest, dark or neutral
+                mermaid:{ theme: "default" },
+                autoSync:true, // Should the editor update as the user makes changes?
+                updateEditor:true,
+                updateDiagram:true
+            }
+        );
+
+        // Redirect the user to the live editor with graph
+        window.location.href = MermaidLiveEditURL + btoa(j);
     }
 
     toggleGraphText = (e) => {
@@ -167,9 +190,11 @@ class SIPDiagram extends React.Component {
                     <hr />
 
                     <div>
-                        <button className="link-button" onClick={(e) => this.toggleGraphText(e)}>Toggle Graph Text</button>
+                        <button title="Show/hide the graph text" className="link-button" disabled={!self.state.diagramText} onClick={(e) => this.toggleGraphText(e)}>Toggle Graph Text</button>
                         &nbsp;
-                        <button className="link-button" onClick={(e) => this.graphReset(e)}>Reset Graph</button>
+                        <button title="Export graph to Mermaid Live Editor for additional features" className="link-button" disabled={!self.state.diagramText} onClick={(e) => this.graphExport(e)}>Export</button>
+                        &nbsp;
+                        <button title="Clear the graph text" className="link-button" disabled={!self.state.diagramText} onClick={(e) => this.graphReset(e)}>Reset</button>
                     </div>
 
                     {self.state.showGraphText
