@@ -50,7 +50,12 @@ class SIPDiagram extends React.Component {
   }
 
     graphReset = (e) => {
-        this.setGraphContent('');
+        var self = this;
+        this.setState({
+            graphKey: '',
+        }, function() {
+            self.setGraphContent('');
+        });
     }
 
     graphExport = (e) => {
@@ -153,11 +158,13 @@ class SIPDiagram extends React.Component {
             errMsg = <pre>{self.state.error.message ? self.state.error.message : self.state.error}</pre>;
         }
 
-        var graphOptions = [];
+        var graphOptions = [
+            <option value="" selected={''===self.state.graphKey}>Select Graph</option>
+        ];
         var allGraphsTemp = allGraphs();
         allGraphsTemp.forEach(function(g) {
             graphOptions.push(
-                <option key={g.key} value={g.key}>{g.name}</option>
+                <option key={g.key} value={g.key} selected={g.key===self.state.graphKey}>{g.name}</option>
             );
         });
 
@@ -171,8 +178,7 @@ class SIPDiagram extends React.Component {
                     <div className="form-input">
                         <label>Call Type</label>
                         <br/>
-                        <select onChange={(e) => this.handleGraphChange(e)} value={this.state.graphValue}>
-                          <option value="select">Select Graph</option>
+                        <select onChange={(e) => this.handleGraphChange(e)} value={this.state.graphKey}>
                           {graphOptions}
                         </select>
                     </div>
@@ -180,11 +186,11 @@ class SIPDiagram extends React.Component {
                     <div className="form-input">
                         <label>Optional: Alter Node Names <small>(comma separated list)</small></label>
                         <br/>
-                        <input disabled={this.state.graphNameDisabled} name="graph-names" type="text" onChange={(e) => this.handleUserChange(e)} value={this.state.graphNames} />
+                        <input disabled={!this.state.graphKey || this.state.graphNameDisabled} name="graph-names" type="text" onChange={(e) => this.handleUserChange(e)} value={this.state.graphNames} />
                     </div>
 
                     <div className="form-input">
-                        <button onClick={(e) => this.drawGraph(e)}>Generate Graph</button>
+                        <button disabled={!this.state.graphKey} onClick={(e) => this.drawGraph(e)}>Generate Graph</button>
                     </div>
 
                     <hr />
