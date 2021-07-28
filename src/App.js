@@ -12,10 +12,12 @@ function App() {
         <h1>
         <FontAwesomeIcon icon={faPhone} flip="horizontal"  inverse />
         &nbsp;
-        SIP Diagrams - Sequence Call Flow Generator
-        &nbsp;
-        <FontAwesomeIcon icon={faPhone}  inverse />
+        Sequence Call Flow Generator
         </h1>
+
+        <h2>
+        sip-diagrams.netlify.app
+        </h2>
       </header>
 
       <SIPDiagram>
@@ -23,6 +25,7 @@ function App() {
       </SIPDiagram>
 
       <footer>
+      <div className="footer-inner">
         <p><strong>About</strong></p>
         <p>A mini site that aims to make creating typical SIP flow diagrams easy by
           using the brilliant <a
@@ -41,6 +44,7 @@ function App() {
       <li>Reliable Provisional Responses: <a href="https://datatracker.ietf.org/doc/html/rfc3262">PRACK RFC 3262</a></li>
       <li>Full list of <a href="https://en.wikipedia.org/wiki/List_of_SIP_response_codes">SIP response codes</a></li>
       </ul>
+      </div>
       </footer>
     </>
   );

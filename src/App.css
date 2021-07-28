@@ -5,7 +5,7 @@ body {
 .App-header {
   background-color: #282c34;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   color: white;
@@ -18,6 +18,10 @@ body {
 
 .App-header h1 {
   font-size: 25px;
+  flex-grow: 1;
+}
+.App-header h2 {
+  font-size: 22px;
 }
 
 .chart-text {
@@ -27,11 +31,17 @@ body {
 }
 
 footer {
-    margin: 50px auto 30px;
+    margin-top: 50px;
+    background: #efefef;
     border-top: 2px solid #dedff9;
     padding-top: 40px;
-    max-width: 500px;
     width: 100%;
+}
+.footer-inner {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px 0 30px;
 }
 
 .link-button {
@@ -64,4 +74,10 @@ footer {
 }
 .form-input {
     margin-bottom: 10px;
+}
+
+.primary-button {
+    padding: 2px 5px;
+    font-size: 17px;
+    margin-bottom: 15px;
 }

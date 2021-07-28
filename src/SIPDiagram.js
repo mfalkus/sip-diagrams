@@ -172,11 +172,10 @@ class SIPDiagram extends React.Component {
             <div className="site-content container-fluid">
                 <div className="row">
                   <div className="col-md-4">
-                    <h4>Start Here...</h4>
                     <p><strong>Select the type of call flow you want to view:</strong></p>
 
                     <div className="form-input">
-                        <label>Call Type</label>
+                        <label>Call Flow</label>
                         <br/>
                         <select onChange={(e) => this.handleGraphChange(e)} value={this.state.graphKey}>
                           {graphOptions}
@@ -190,7 +189,7 @@ class SIPDiagram extends React.Component {
                     </div>
 
                     <div className="form-input">
-                        <button disabled={!this.state.graphKey} onClick={(e) => this.drawGraph(e)}>Generate Graph</button>
+                        <button className="primary-button" disabled={!this.state.graphKey} onClick={(e) => this.drawGraph(e)}>Generate Sequence Diagram</button>
                     </div>
 
                     <hr />
